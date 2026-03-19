@@ -19,8 +19,8 @@ case "${SERVICE_ROLE}" in
             udpspeeder_args+=("-s" "-l" "127.0.0.1:${tmp_port}" "-r" "${SERVICE_REMOTE_IP}:${SERVICE_REMOTE_PORT}")
             ;;
     client)
-            udp2raw_args+=("-l" "-l" "127.0.0.1:${tmp_port}" "-r" "${SERVICE_REMOTE_IP}:${SERVICE_REMOTE_PORT}")
-            udpspeeder_args+=("-l" "-l" "${SERVICE_LISTEN_IP}:${SERVICE_LISTEN_PORT}" "-r" "127.0.0.1:${tmp_port}")
+            udp2raw_args+=("-c" "-l" "127.0.0.1:${tmp_port}" "-r" "${SERVICE_REMOTE_IP}:${SERVICE_REMOTE_PORT}")
+            udpspeeder_args+=("-c" "-l" "${SERVICE_LISTEN_IP}:${SERVICE_LISTEN_PORT}" "-r" "127.0.0.1:${tmp_port}")
             ;;
     *) echo "Invalid SERVICE_ROLE: ${SERVICE_ROLE}" >&2; exit 1 ;;
 esac

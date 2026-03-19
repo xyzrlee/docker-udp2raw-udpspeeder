@@ -12,6 +12,7 @@ services:
             - SERVICE_LISTEN_PORT=40001
             - SERVICE_REMOTE_IP=127.0.0.1
             - SERVICE_REMOTE_PORT=40000
+            - SERVICE_TMP_PORT=50000
             - UDP2RAW_CIPHER_MODE=xor
             - UDP2RAW_AUTH_MODE=simple 
             - UDP2RAW_DISABLE_COLOR=
@@ -33,6 +34,7 @@ services:
             - SERVICE_LISTEN_PORT=40002
             - SERVICE_REMOTE_IP=127.0.0.1
             - SERVICE_REMOTE_PORT=40001
+            - SERVICE_TMP_PORT=50001
             - UDP2RAW_CIPHER_MODE=xor
             - UDP2RAW_AUTH_MODE=simple 
             - UDP2RAW_DISABLE_COLOR=

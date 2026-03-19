@@ -22,7 +22,7 @@ RUN set -ex \
  && make \
  && install udp2raw /usr/local/bin \
  && cd /tmp/repo \
- && git clone git clone https://github.com/wangyu-/UDPspeeder.git \
+ && git clone https://github.com/wangyu-/UDPspeeder.git \
  && cd UDPspeeder \
  && make \
  && install speederv2 /usr/local/bin

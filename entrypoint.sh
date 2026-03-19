@@ -16,7 +16,7 @@ tmp_port=${SERVICE_TMP_PORT:-50000}
 case "${SERVICE_ROLE}" in
     server)
             udp2raw_args+=("-s" "-l" "${SERVICE_LISTEN_IP}:${SERVICE_LISTEN_PORT}" "-r" "127.0.0.1:${tmp_port}")
-            udpspeeder_args+=("-s" "-l" "127.0.0.1:${tmp_port:50000}" "-r" "${SERVICE_REMOTE_IP}:${SERVICE_REMOTE_PORT}")
+            udpspeeder_args+=("-s" "-l" "127.0.0.1:${tmp_port}" "-r" "${SERVICE_REMOTE_IP}:${SERVICE_REMOTE_PORT}")
             ;;
     client)
             udp2raw_args+=("-l" "-l" "127.0.0.1:${tmp_port}" "-r" "${SERVICE_REMOTE_IP}:${SERVICE_REMOTE_PORT}")
@@ -30,19 +30,36 @@ while IFS='=' read -r key value; do
         UDP2RAW_*)
             name="${key#UDP2RAW_}"
             name=$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]' | tr '_' '-')
-            udp2raw_args+=("--$name" "$value")
+            if [ -n "${name:-}" ]
+            then
+                udp2raw_args+=("--${name}")
+                if [ -n "${value:-}" ]
+                then
+                    udp2raw_args+=("${value}")
+                fi
+            fi
             ;;
         UDPSPEEDER_*)
             name="${key#UDPSPEEDER_}"
             name=$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]' | tr '_' '-')
-            udpspeeder_args+=("--$name" "$value")
+            if [ -n "${name:-}" ]
+            then
+                udpspeeder_args+=("--${name}")
+                if [ -n "${value:-}" ]
+                then
+                    udpspeeder_args+=("${value}")
+                fi
+            fi
             ;;
     esac
 done < <(env)
 
-udp2raw "${udp2raw_args[@]}"
+echo "udp2raw ${udp2raw_args[@]}"
+echo "speederv2 ${udpspeeder_args[@]}"
+
+udp2raw "${udp2raw_args[@]}" &
 udp2raw_pid=$!
-speederv2 "${udpspeeder_args[@]}"
+speederv2 "${udpspeeder_args[@]}" &
 udpspeeder_pid=$!
 
 trap 'kill ${udp2raw_pid} ${udpspeeder_pid} 2>/dev/null' SIGTERM SIGINT

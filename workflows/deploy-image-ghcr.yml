@@ -1,0 +1,35 @@
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: udp2raw-udpspeeder
+  TAG_DEV: dev
+  TAG_LATEST: latest
+  TAG_CURRENT: v$(date +%Y%m%d)
+
+jobs:
+  build:
+    name: Deploy to ghcr.io
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout master
+      uses: actions/checkout@v2
+    - name: Build
+      run: | 
+        docker build \
+        --tag ghcr.io/${{github.repository_owner}}/${{env.IMAGE_NAME}}:${{env.TAG_CURRENT}} \
+        --tag ghcr.io/${{github.repository_owner}}/${{env.IMAGE_NAME}}:${{env.TAG_LATEST}} \
+        --tag ghcr.io/${{github.repository_owner}}/${{env.IMAGE_NAME}}:${{env.TAG_DEV}} \
+        .
+    - name: Push image to GitHub - master
+      if: ${{ github.ref_name == 'master' }}
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u "${{ github.actor }}" --password-stdin ghcr.io
+        docker push ghcr.io/${{github.repository_owner}}/${{env.IMAGE_NAME}}:${{env.TAG_CURRENT}}
+        docker push ghcr.io/${{github.repository_owner}}/${{env.IMAGE_NAME}}:${{env.TAG_LATEST}}
+    - name: Push image to GitHub - dev
+      if: ${{ startsWith(github.ref_name, 'dev-') }}
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u "${{ github.actor }}" --password-stdin ghcr.io
+        docker push ghcr.io/${{github.repository_owner}}/${{env.IMAGE_NAME}}:${{env.TAG_DEV}}
